@@ -1,0 +1,52 @@
+CREATE TABLE famous_people (id INTEGER PRIMARY KEY,
+    name TEXT, 
+    age NUMERIC, 
+    number_of_movies INTEGER);
+
+INSERT INTO famous_people VALUES (1, "Chris Hemsworth", 39, 36);
+INSERT INTO famous_people VALUES (2, "Salma Hayek", 52, 59);
+INSERT INTO famous_people VALUES (3, "Jennifer Lopez", 49, 38);
+INSERT INTO famous_people VALUES (4, "Paul Rudd", 49, 61);
+INSERT INTO famous_people VALUES (5, "Anna Kendrick", 33, 42);
+INSERT INTO famous_people VALUES (6, "Tom Holland", 26, 31);
+
+CREATE TABLE movies (person_id INTEGER,
+    first_movie TEXT,
+    first_movie_release_year INTEGER,
+    most_recent_movie TEXT);
+
+INSERT INTO movies VALUEs (1, "Ahead of the Class", 2005, "Thor: Love and Thunder");
+INSERT INTO movies VALUES (2, "Mi Vida Loca", 1993, "Puss In Boots: The Last Wish");
+INSERT INTO movies VALUES (3, "My Little Girl", 1987, "Halftime");
+INSERT INTO movies VALUES (4, "The Betsy", 1978, "The Bob's Burger Movie");
+INSERT INTO movies VALUES (5, "Deep in the Woods", 2000, "Alice Darling");
+INSERT INTO movies VALUES (6, "The Impossible", 2012, "Uncharted");
+
+
+CREATE TABLE worked_together (id INTEGER PRIMARY KEY,
+    actor1_id INTEGER, 
+    actor2_id INTEGER, 
+    movie_title TEXT);
+
+INSERT INTO worked_together VALUES (1, 1, 4, "Avengers: Infinity War and Endgame");
+INSERT INTO worked_together VAlUES (2, 1, 6, "Avengers: Infinity War and Engdgame, In the
+Heart of the Sea");
+INSERT INTO worked_together VALUES (3, 3, 5, "What to expect when you're expecting");
+INSERT INTO worked_together VALUES (4, 4, 6, "Avengers: Infinity War and Endgame,
+Captain America: Civil War");
+
+SELECT * FROM famous_people 
+    ORDER BY number_of_movies desc;
+
+SELECT f.name, f.number_of_movies, m.most_recent_movie, m.first_movie, m.first_movie_release_year 
+    FROM famous_people f
+    JOIN movies m
+    ON f.id = m.person_id
+    ORDER by first_movie_release_year asc;
+
+SELECT a.name, b.name, worked_together.movie_title
+    FROM worked_together
+    JOIN famous_people a
+    ON worked_together.actor1_id = a.id
+    JOIN famous_people b
+    ON worked_together.actor2_id = b.id;
