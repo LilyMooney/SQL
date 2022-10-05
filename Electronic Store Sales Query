@@ -16,8 +16,9 @@ SELECT acctnum
     ON cust.order_id = Feb.orderID;
     
 #4. Which product was the cheapest one sold in January, and what was the price?
-SELECT distinct MIN(price), product 
-    FROM BIT_DB.JanSales;
+SELECT distinct product, MIN(price) 
+    FROM BIT_DB.JanSales
+    ORDER BY price ASC LIMIT 1;
 
 #5. What is the total revenue for each product sold in January?
 SELECT product, Sum(quantity)*price as revenue 
@@ -36,3 +37,4 @@ SELECT COUNT(cust.acctnum), AVG(quantity * price)
     LEFT JOIN BIT_DB.customers cust
     ON Feb.orderID = cust.order_id
     WHERE Feb.quantity > 2;
+    
