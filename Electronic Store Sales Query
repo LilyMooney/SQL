@@ -38,3 +38,56 @@ SELECT COUNT(cust.acctnum), AVG(quantity * price)
     ON Feb.orderID = cust.order_id
     WHERE Feb.quantity > 2;
     
+#8. How many orders were placed from 2/13/19 to 2/18/19?
+SELECT SUM(orderdate)
+    FROM BIT_DB.FebSales
+    WHERE orderdate between '02/13/19 00:00' and '02/18/19 00:00';
+    
+#9. For orders made on 2/18/19 at 01:35am where did each order originate from?
+SELECT location
+    FROM BIT_DB.FebSales
+    WHERE orderdate = '02/18/19 01:35';
+    
+#10. What batteries were sold in February and how many of each were sold?
+SELECT distinct Product, sum(quantity)
+    FROM BIT_DB.FebSales
+    GROUP BY Product
+    HAVING Product like '%Batteries%';
+    
+#11. List all the products sold in Los Angeles in Febrary, and include how many of each were sold.
+SELECT SUM(quantity), Product
+    FROM Bit_DB.FebSales
+    WHERE location like '%Los Angeles%'
+    GROUP BY Product;
+    
+#12. Which locations in New York received at least 3 orders in January, and how many orders did they each receive?
+SELECT location, COUNT(orderID)
+    FROM BIT_DB.JanSales  
+    WHERE location LIKE '%NYC%' 
+    GROUP BY location
+    HAVING COUNT(orderID) > 2;
+    
+#13. How many of each type of headphone was sold in February?
+SELECT SUM(quantity) as quantity, Product 
+    FROM BIT_DB.FebSales
+    WHERE Product like '%headphones%'
+    GROUP BY Product;
+    
+#14. What was the average amount spent per account in February?
+SELECT AVG(quantity*price)
+    FROM BIT_DB.FebSales Feb
+    LEFT JOIN BIT_DB.customers cust
+    ON Feb.orderID = cust.order_id;
+    
+#15. What was the average quantity of products purchased per account in Febrary?
+SELECT SUM(quantity)/COUNT(cust.acctnum)
+    FROM BIT_DB.FebSales Feb
+    LEFT JOIN BIT_DB.customers cust
+    ON Feb.orderID = cust.order_id;
+    
+#16. Which product brought in the most revenue in January and how much revenue did it bring in total?
+SELECT distinct Product, SUM(quantity)*price as Revenue
+    FROM BIT_DB.JanSales
+    GROUP BY Product
+    ORDER BY Revenue DESC
+    LIMIT 1;
