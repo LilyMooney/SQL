@@ -1,0 +1,173 @@
+#In this SQL, I'm querying a database with multiple tabes in it to quantify statistics about employee, customer, invoice, and product data. 
+
+#1. Which employee assisted each customer?
+SELECT 
+    c.FirstName, 
+    c.LastName, 
+    e.FirstName AS 'Rep First Name', 
+    e.LastName AS 'Rep Last Name' 
+    FROM chinook.customers c
+    
+    LEFT JOIN chinook.employees e
+    ON c.supportrepid = e.employeeid;
+
+#2. How many tracks are in each media type?
+SELECT COUNT(t.name), m.name 
+    FROM chinook.media_types m
+    
+    JOIN chinook.tracks t
+    ON m.mediatypeid = t.mediatypeid
+    
+    GROUP BY m.name;
+    
+#3. How many invocies does each customer have?
+SELECT 
+    COUNT(i.customerid) AS 'total invoices', 
+    c.customerid, 
+    c.firstname, 
+    c.lastname 
+    FROM chinook.customers c
+    
+    JOIN chinook.invoices i
+    ON c.customerid = i.customerid
+    
+    GROUP BY c.customerid;
+    
+#4. How many times has each track been sold?
+SELECT 
+    tracks.name, 
+    COUNT(invoice.quantity) AS 'total sold', 
+    SUM(invoice.unitprice) AS 'total profit' 
+    FROM chinook.tracks tracks
+    
+    LEFT JOIN chinook.invoice_items invoice
+    ON tracks.trackid = invoice.trackid
+    
+    GROUP BY tracks.TrackId
+    ORDER BY COUNT(invoice.quantity) desc;
+    
+#5. What is the total sales for 2012 year?
+SELECT 
+    ROUND(SUM(inv.total),2) AS 'sales from 2012' 
+    FROM chinook.invoice_items inv
+    
+    JOIN chinook.invoices 
+    ON inv.InvoiceId = invoices.InvoiceId
+    
+    WHERE invoices.InvoiceDate LIKE '2012%';
+    
+#6. Show the total sales made by each sales agent.
+SELECT 
+    e.lastname, 
+    e.firstname, 
+    ROUND(SUM(it.total),2) AS 'total sales' 
+    FROM chinook.customers c
+    
+    JOIN chinook.employees e
+    ON c.supportrepid = e.employeeid
+    
+    JOIN chinook.invoices i
+    ON c.customerid = i.customerid
+    
+    JOIN chinook.invoice_items it
+    ON i.invoiceid = it.InvoiceId
+    
+    WHERE e.title = 'Sales Support Agent'
+    GROUP BY e.employeeid;
+
+#7. Show customers who live outside of the US.
+SELECT 
+    customerid, 
+    firstname, 
+    lastname, 
+    country 
+    FROM chinook.customers
+    WHERE country != 'USA';
+    
+#8. What countries have had over 7 orders?
+SELECT COUNT(InvoiceId) AS 'total_orders', BillingCountry 
+    FROM chinook.invoices
+    GROUP BY BillingCountry
+    HAVING total_orders > 7
+    ORDER BY total_orders desc;
+    
+#9. Provide a query that shows all the Tracks, and include the Album name, Media type, and Genre.
+SELECT 
+    tracks.Name AS 'track name', 
+    albums.Title AS 'album title', 
+    media.name AS 'media type', 
+    genres.Name AS 'genre' 
+    FROM chinook.tracks
+    
+    JOIN chinook.albums
+    ON tracks.AlbumId = albums.AlbumId
+    
+    JOIN chinook.media_types media
+    ON tracks.MediaTypeId = media.MediaTypeId
+    
+    JOIN chinook.genres
+    ON tracks.GenreId = genres.GenreId
+    
+    GROUP BY tracks.Name;
+    
+#10. How many invoices are from Canada and the US?
+SELECT COUNT(invoiceid), billingcountry 
+    FROM chinook.invoices
+    WHERE billingcountry IN ('Canada', 'USA')
+    GROUP BY billingcountry;
+    
+#11. Show all invoices that are $5 or more in 2010
+SELECT * FROM chinook.invoices
+    WHERE total >= 5 AND invoicedate LIKE '2010%';
+
+#12. What are the top 5 most expensive invoices and who is the customer for each?
+SELECT 
+    invoices.Total, 
+    customers.firstname, 
+    customers.lastname 
+    FROM chinook.invoices
+    
+    LEFT JOIN chinook.customers
+    ON invoices.CustomerId = customers.CustomerId
+    
+    GROUP BY invoices.InvoiceId
+    ORDER BY invoices.Total desc
+    LIMIT 5;
+    
+#13. What tracks are on the Grunge playlist?
+SELECT tracks.Name, playlists.Name 
+    FROM chinook.playlist_track
+
+    JOIN chinook.tracks
+    ON playlist_track.trackid = tracks.TrackId
+    
+    JOIN chinook.playlists
+    ON playlist_track.PlaylistId = playlists.PlaylistId
+    
+    WHERE playlists.name = 'Grunge';
+
+#14. What is the average price for a track?
+SELECT ROUND(AVG(UnitPrice),2) FROM chinook.tracks;
+
+#15. Find the invoices of customers from Italy.
+SELECT 
+    c.firstname, 
+    c.lastname, 
+    i.InvoiceId, 
+    i.InvoiceDate, 
+    i.BillingCountry
+    FROM chinook.invoices i
+    
+    LEFT JOIN chinook.customers c
+    ON i.customerid = c.customerid
+    
+    WHERE i.BillingCountry = 'Italy';
+    
+#16. How many invocies were there in 2012?
+SELECT COUNT(invoiceid) AS 'total invoices in 2012' 
+    FROM chinook.invoices
+    WHERE invoicedate LIKE '2012%';
+    
+#17. Find a qunite/distinct list of billing countries from teh Invoice table
+SELECT distinct BillingCountry FROM chinook.invoices;
+
