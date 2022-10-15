@@ -168,6 +168,6 @@ SELECT COUNT(invoiceid) AS 'total invoices in 2012'
     FROM chinook.invoices
     WHERE invoicedate LIKE '2012%';
     
-#17. Find a qunite/distinct list of billing countries from teh Invoice table
+#17. Find a qunite/distinct list of billing countries from the Invoice table
 SELECT distinct BillingCountry FROM chinook.invoices;
 
